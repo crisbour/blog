@@ -22,6 +22,8 @@ jobs:
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           version: pre-release
+        run: |
+            R -e 'install.packages(c("rmarkdown", "knitr"))'
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:
