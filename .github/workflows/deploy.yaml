@@ -13,13 +13,14 @@ on:
 jobs:
   build-deploy:
     runs-on: ubuntu-latest
-    permissions: {contents: write}
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       # Quarto actions find out more here: https://github.com/quarto-dev/quarto-actions?tab=readme-ov-file
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
-          version: latest
+          version: pre-release
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:
