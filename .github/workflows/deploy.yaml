@@ -18,13 +18,21 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v4
+      - uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.4.1'
+
+      - name: Set R library path
+        run: echo "R_LIBS_USER=$HOME/R/library" >> $GITHUB_ENV
+
+      - name: Install R dependencies
+        run: |
+          mkdir -p $R_LIBS_USER
+          R -e 'install.packages(c("rmarkdown", "knitr"))'
       # Quarto actions find out more here: https://github.com/quarto-dev/quarto-actions?tab=readme-ov-file
       - uses: quarto-dev/quarto-actions/setup@v2
         with:
           version: pre-release
-      - name: Install R dependencies
-        run: |
-            R -e 'install.packages(c("rmarkdown", "knitr"))'
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:
