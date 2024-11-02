@@ -104,18 +104,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<style>
-
-      .quarto-title-block .quarto-title-banner {
-        background: #FFA500;
-      }
-</style>
 
 
 <link rel="stylesheet" href="../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent">
+<body class="nav-fixed">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -191,7 +185,29 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#unreal-engine" id="toc-unreal-engine" class="nav-link active" data-scroll-target="#unreal-engine">Unreal Engine</a></li>
+  <li><a href="#running-on-nix" id="toc-running-on-nix" class="nav-link" data-scroll-target="#running-on-nix">Running on Nix</a>
+  <ul class="collapse">
+  <li><a href="#fhsuserenv" id="toc-fhsuserenv" class="nav-link" data-scroll-target="#fhsuserenv">FHSUserEnv</a></li>
+  <li><a href="#nix-ld" id="toc-nix-ld" class="nav-link" data-scroll-target="#nix-ld"><code>nix-ld</code></a></li>
+  </ul></li>
+  <li><a href="#running-in-container" id="toc-running-in-container" class="nav-link" data-scroll-target="#running-in-container">Running in container</a>
+  <ul class="collapse">
+  <li><a href="#lxd" id="toc-lxd" class="nav-link" data-scroll-target="#lxd">LXD</a></li>
+  <li><a href="#docker" id="toc-docker" class="nav-link" data-scroll-target="#docker">Docker</a>
+  <ul class="collapse">
+  <li><a href="#gpu-xserver-and-network-to-docker" id="toc-gpu-xserver-and-network-to-docker" class="nav-link" data-scroll-target="#gpu-xserver-and-network-to-docker">GPU, Xserver and network to Docker</a></li>
+  </ul></li>
+  <li><a href="#more-info" id="toc-more-info" class="nav-link" data-scroll-target="#more-info">More Info</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -203,11 +219,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Unreal Engine</h1>
 <p>The Unreal Engine will be useful for us to generate synthetic data for our research. They provide a prebuild binary for Ubuntu and Centos, however, since I am running NixOS (non FHS system), the prebuilt binary can’t link to the requested libraries.</p>
 <p><strong>TL;DR</strong> I have tried a few approaches to get it working on Nix or LXD under Nix, however, in the end I resorted to using their <code>docker</code> image.</p>
-<section id="running-on-nix" class="level2">
-<h2 class="anchored" data-anchor-id="running-on-nix">Running on Nix</h2>
+</section>
+<section id="running-on-nix" class="level1">
+<h1>Running on Nix</h1>
 <p>Prebuilt binaries expecting to run on Linux normally have hard-coded paths in the executable, such as <code>/lib/libstdc++.6.so</code> or even worse the linker itself cannot be found.</p>
-<section id="fhsuserenv" class="level3">
-<h3 class="anchored" data-anchor-id="fhsuserenv">FHSUserEnv</h3>
+<section id="fhsuserenv" class="level2">
+<h2 class="anchored" data-anchor-id="fhsuserenv">FHSUserEnv</h2>
 <p>In some cases workaround to build and FHS environment fixes the issue. In this scenario, the program is really big (larger than 30GB), so populating a derivation with that amount of extra storage is not acceptable for my laptop, but I have tried to do so:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode nix code-with-copy"><code class="sourceCode nix"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">{</span> <span class="va">pkgs</span> <span class="op">?</span> <span class="bu">import</span>&lt;nixpkgs&gt;<span class="op">{}}</span>:</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#stdenv, buildFHSUserEnv, fetchFromGitHub, git, python3, mono, clang, cmake, libGL, xorg }:</span></span>
@@ -267,8 +284,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p><code>patchShebangs</code> overwrites the <code>#!/usb/bin/&lt;executable&gt;</code> paths with the nixpkgs paths in order to fix the build issue. However, this still seems to error with a binary trying to call an utility from a hard-coded path.</p>
 </section>
-<section id="nix-ld" class="level3">
-<h3 class="anchored" data-anchor-id="nix-ld"><code>nix-ld</code></h3>
+<section id="nix-ld" class="level2">
+<h2 class="anchored" data-anchor-id="nix-ld"><code>nix-ld</code></h2>
 <p>Also tried to setup an environment using <a href="https://github.com/nix-community/nix-ld">nix-ld</a> to run with libraries paths being patched automagically. ==IDK how nix-ld actually works as I have checked out their source code==</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode nix code-with-copy"><code class="sourceCode nix"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">with</span> <span class="bu">import</span> &lt;nixpkgs&gt; <span class="op">{};</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>mkShell <span class="op">{</span></span>
@@ -293,8 +310,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="st">  ''</span><span class="op">;</span></span>
 <span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="lxd" class="level3">
-<h3 class="anchored" data-anchor-id="lxd">LXD</h3>
+</section>
+<section id="running-in-container" class="level1">
+<h1>Running in container</h1>
+<section id="lxd" class="level2">
+<h2 class="anchored" data-anchor-id="lxd">LXD</h2>
 <p>Next obvious answer to me was to work in a Distro that UnrealEngine supports by default. Getting LXD to work in NixOS had it’s own complication with forwarding network.</p>
 <p>In order to get LXD working properly on NixOS, the following is added to the <code>configuration.nix</code>:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode nix code-with-copy"><code class="sourceCode nix"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Adding lxd and overriding the package</span></span>
@@ -353,8 +373,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>  networking.firewall.trustedInterfaces = <span class="op">[</span> <span class="st">"lxdbr0"</span> <span class="op">]</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>While the github repository compiled, it didn’t finish linking due to an error I couldn’t debug. ==I haven’t tried the prebuilt binary for this one==</p>
 </section>
-<section id="docker" class="level3">
-<h3 class="anchored" data-anchor-id="docker">Docker</h3>
+<section id="docker" class="level2">
+<h2 class="anchored" data-anchor-id="docker">Docker</h2>
 <p>Luckly it seems that EpicGames provide a docker image for their releases of Unreal as well.</p>
 <p>In order to access them you need to generate a personal autorisation token: <code>Profile &gt; Settings &gt; Developer settings &gt; Personal access token &gt; Tokens (classic)</code>. Enable <code>read: registry</code> for this token. Then login into the <code>ghcr</code> with docker:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">export</span> <span class="va">GH_PAT</span><span class="op">=&lt;</span>copy_token_here<span class="op">&gt;</span></span>
@@ -363,8 +383,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb5"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> pull ghcr.io/epicgames/unreal-engine:dev-5.4.4</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>Now in order to run your container with Xserver support and GPU passthrough, run:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode sh code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">docker</span> run <span class="at">--rm</span> <span class="at">-ti</span> <span class="at">--device</span> nvidia.com/gpu=all <span class="at">-v</span>/tmp/.X11-unix:/tmp/.X11-unix:rw <span class="at">-e</span> DISPLAY <span class="at">--network</span> host ghcr.io/epicgames/unreal-engine:dev-5.4.3 bash</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="gpu-xserver-and-network-to-docker" class="level4">
-<h4 class="anchored" data-anchor-id="gpu-xserver-and-network-to-docker">GPU, Xserver and network to Docker</h4>
+<section id="gpu-xserver-and-network-to-docker" class="level3">
+<h3 class="anchored" data-anchor-id="gpu-xserver-and-network-to-docker">GPU, Xserver and network to Docker</h3>
 <p>There are a few details to iron out in order to make the above command work. For NixOS the followings:</p>
 <ol type="1">
 <li>Ensure docker is enable and has support for nvidia:</li>
@@ -404,10 +424,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">};</span></span>
 <span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="va">wantedBy</span> <span class="op">=</span> <span class="op">[</span> <span class="st">"multi-user.target"</span> <span class="op">];</span></span>
 <span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span>;</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-
-
 </section>
 </section>
+<section id="more-info" class="level2">
+<h2 class="anchored" data-anchor-id="more-info">More Info</h2>
+<p>More information about using Unreal in containers can be found at <a href="https://unrealcontainers.com/docs/use-cases/">UnrealContainers</a>, showcasing how to setup docker with correct flags to enable different functionalities.</p>
+
+
 </section>
 </section>
 
