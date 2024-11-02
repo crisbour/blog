@@ -12,6 +12,7 @@ website:
         href: https://twitter.com
 format:
   html:
+    toc: true
     theme:
       dark: darkly
       #dark: [cosmo, theme-dark.scss]

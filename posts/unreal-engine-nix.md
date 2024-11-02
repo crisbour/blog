@@ -16,13 +16,13 @@ requested libraries.
 I have tried a few approaches to get it working on Nix or LXD under Nix,
 however, in the end I resorted to using their `docker` image.
 
-## Running on Nix
+# Running on Nix
 
 Prebuilt binaries expecting to run on Linux normally have hard-coded paths in
 the executable, such as `/lib/libstdc++.6.so` or even worse the linker itself
 cannot be found. 
 
-### FHSUserEnv
+## FHSUserEnv
 In some cases workaround to build and FHS environment fixes the
 issue. In this scenario, the program is really big (larger than 30GB), so
 populating a derivation with that amount of extra storage is not acceptable for
@@ -90,7 +90,7 @@ buildFHSUserEnv {
 paths in order to fix the build issue. However, this still seems to error with a binary trying to call an utility from
 a hard-coded path.
 
-### `nix-ld`
+## `nix-ld`
 
 Also tried to setup an environment using [nix-ld](https://github.com/nix-community/nix-ld) to run with libraries paths being patched automagically.
 ==IDK how nix-ld actually works as I have checked out their source code==
@@ -120,7 +120,9 @@ mkShell {
 }
 ```
 
-### LXD
+# Running in container
+
+## LXD
 
 Next obvious answer to me was to work in a Distro that UnrealEngine supports by
 default. Getting LXD to work in NixOS had it's own complication with forwarding
@@ -190,7 +192,7 @@ While the github repository compiled, it didn't finish linking due to an error I
 couldn't debug.
 ==I haven't tried the prebuilt binary for this one==
 
-### Docker
+## Docker
 
 Luckly it seems that EpicGames provide a docker image for their releases of
 Unreal as well.
@@ -217,7 +219,7 @@ run:
 docker run --rm -ti --device nvidia.com/gpu=all -v/tmp/.X11-unix:/tmp/.X11-unix:rw -e DISPLAY --network host ghcr.io/epicgames/unreal-engine:dev-5.4.3 bash
 ```
 
-#### GPU, Xserver and network to Docker
+### GPU, Xserver and network to Docker
 
 There are a few details to iron out in order to make the above command work. For
 NixOS the followings:
@@ -263,6 +265,10 @@ systemd.services.xhost-docker = {
 };
 ```
 
+## More Info
 
+More information about using Unreal in containers can be found at
+[UnrealContainers](https://unrealcontainers.com/docs/use-cases/), showcasing how
+to setup docker with correct flags to enable different functionalities.
 
 

@@ -5,7 +5,7 @@
 freeze: true
 
 # Enable banner style title blocks
-title-block-banner: "#FFA500"
+title-block-banner: true
 
 # Change the color of title-block-banner to "#FFA500".
 # Change it again to `banner.jpg`.
