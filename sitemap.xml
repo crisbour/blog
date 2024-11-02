@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://crisbour.github.io/blog/posts/rmarkdown-post/index.html</loc>
-    <lastmod>2024-11-02T13:35:20.228Z</lastmod>
-  </url>
-  <url>
-    <loc>https://crisbour.github.io/blog/posts/unreal-engine-nix.html</loc>
-    <lastmod>2024-11-02T13:35:20.228Z</lastmod>
-  </url>
-  <url>
-    <loc>https://crisbour.github.io/blog/about.html</loc>
-    <lastmod>2024-11-02T13:35:20.228Z</lastmod>
+    <loc>https://crisbour.github.io/blog/posts/welcome/index.html</loc>
+    <lastmod>2024-11-02T13:43:36.610Z</lastmod>
   </url>
   <url>
     <loc>https://crisbour.github.io/blog/index.html</loc>
-    <lastmod>2024-11-02T13:35:20.228Z</lastmod>
+    <lastmod>2024-11-02T13:43:36.610Z</lastmod>
   </url>
   <url>
-    <loc>https://crisbour.github.io/blog/posts/welcome/index.html</loc>
-    <lastmod>2024-11-02T13:35:20.228Z</lastmod>
+    <loc>https://crisbour.github.io/blog/about.html</loc>
+    <lastmod>2024-11-02T13:43:36.610Z</lastmod>
+  </url>
+  <url>
+    <loc>https://crisbour.github.io/blog/posts/unreal-engine-nix.html</loc>
+    <lastmod>2024-11-02T13:43:36.610Z</lastmod>
   </url>
 </urlset>

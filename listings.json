@@ -3,8 +3,7 @@
     "listing": "/index.html",
     "items": [
       "/posts/unreal-engine-nix.html",
-      "/posts/welcome/index.html",
-      "/posts/rmarkdown-post/index.html"
+      "/posts/welcome/index.html"
     ]
   }
 ]
