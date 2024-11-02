@@ -1,12 +1,15 @@
 ---
-title: "build-your-own-blog-exercises"
+title: "crisbour Blog"
 listing:
   contents: posts
   sort: "date desc"
-  type: default
   categories: true
+  fields: [date, title, image, description, categories]
+  type: default
   sort-ui: false
   filter-ui: false
+  date-format: "MMMM DD, YYYY"
+description: Recent posts on crisbour blog
 page-layout: full
 title-block-banner: true
 ---

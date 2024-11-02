@@ -2,7 +2,7 @@ project:
   type: website
 
 website:
-  title: "build-your-own-blog-exercises"
+  title: "Cristian Bourceanu"
   navbar:
     right:
       - about.qmd
@@ -12,8 +12,15 @@ website:
         href: https://twitter.com
 format:
   html:
-    theme: cosmo
+    theme:
+      dark: darkly
+      #dark: [cosmo, theme-dark.scss]
+      light: cosmo
     css: styles.css
+    code-copy: true
+    code-overflow: wrap
+
+
 
 editor: visual
 

@@ -4,23 +4,25 @@ image: profile.jpg
 about:
   template: jolla
   links:
-    - icon: twitter
-      text: Twitter
-      href: https://twitter.com
     - icon: linkedin
       text: LinkedIn
-      href: https://linkedin.com
+      href: https://www.linkedin.com/in/vasile-cristian-bourceanu/
     - icon: github
       text: Github
-      href: https://github.com
+      href: https://github.com/crisbour
 ---
 
-About this blog
+Welcome to my blog! I am a PhD student in University of Edinburgh, researching
+Multispectral LiDAR development and applications, but my previous experience is
+in RISC-V and hardware design.
+
+I have started this blog as a way to dump troubleshooting threads and document
+things I find interesting.
 
 <!--
 
     Change the title of the page.
     Change the template to marquee.
     Update the links to your profile pages.
-    
+
 -->
