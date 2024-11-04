@@ -197,6 +197,10 @@ couldn't debug.
 Luckly it seems that EpicGames provide a docker image for their releases of
 Unreal as well.
 
+First of all, become a member of the EpicGames github group in order to access
+repositories and registry. Follow
+[Getting started with Unreal Engine source code access](https://www.unrealengine.com/en-US/ue-on-github).
+
 In order to access them you need to generate a personal autorisation token:
 `Profile > Settings > Developer settings > Personal access token > Tokens
 (classic)`. Enable `read: registry` for this token. Then login into the `ghcr`
@@ -271,4 +275,4 @@ More information about using Unreal in containers can be found at
 [UnrealContainers](https://unrealcontainers.com/docs/use-cases/), showcasing how
 to setup docker with correct flags to enable different functionalities.
 
-
+For information on Linux setup: https://dev.epicgames.com/documentation/en-us/unreal-engine/linux-development-quickstart-for-unreal-engine
