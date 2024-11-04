@@ -203,7 +203,7 @@ repositories and registry. Follow
 
 In order to access them you need to generate a personal autorisation token:
 `Profile > Settings > Developer settings > Personal access token > Tokens
-(classic)`. Enable `read: registry` for this token. Then login into the `ghcr`
+(classic)`. Enable `read: packages` for this token. Then login into the `ghcr`
 with docker:
 
 ```sh
