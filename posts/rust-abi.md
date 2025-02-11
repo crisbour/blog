@@ -24,6 +24,12 @@ does not come equipped with the same paradigm:
 - [ResultTypes.jl](https://github.com/0x0f0f0f/ResultTypes.jl)
 - `Option` is generally used as `Union{T, Nothing}` in Julia
 
+## Existing solution
+
+You can call Julia from Rust, using the exposed C FFI for Julia as leveraged by
+the [jlrs](https://github.com/Taaitaaiger/jlrs) crate, but we are also
+interested about the reverse.
+
 
 ## Rust ABI 
 
@@ -53,4 +59,25 @@ packager to build Rust pacakge and generate the necessary C-FFI shims for the
 two sides as follows:
 
 1. Construct a SAT of the public interface of the Rust library
-2. 
+2. Limit the scope of supported types to be translated as follows:
+    - Rust::`Result<T, dyn Box<Error>>` <-> Julia::`ResultType{T}`: indirect C-FFI WIP workout common
+      representation
+    - Rust::`Option<T>` <-> Julia::`Union{T, Nothing}`: simply use C++ union
+    - Primitives
+        - integer and floats can be directly converted
+        - `char*`, `CString`, `CStr`, Rust::`String`, Rust::`&str`,
+        Julia::`String`, Julia::`SubString` => These need special attentions
+    - enums: ==WARN Julia does not have a first class enum type==, but it
+    depends on the global constant declaration similar to C. On the other side,
+    Rust::`enum` is more similar to a Julia::`Union`. Also special care needs to
+    be taken as a common design pattern in Julia is to do multiple dispatch on
+    type hierarchies, whereas Rust dispatches over traits.
+    - structs: Every Rust struct must be converted to a C repr struct in order
+      to be exposed through the FFI. The same problem seems to occur with Julia
+3. While in Julia or structs are considered to be passed by reference, Rust
+   defines, clone, immutable ref or mutable ref.
+   - WIP: Write some simple tests to understand how structs behave in Julia, but
+     from my observations so far, it's either immutable or mutable ref based on
+     `struct` definition rather than function definition.
+
+
