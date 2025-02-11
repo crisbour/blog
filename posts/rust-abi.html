@@ -6,9 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="description" content="Recent posts on crisbour blog">
+<meta name="author" content="Cristian Bourceanu">
+<meta name="dcterms.date" content="2025-02-11">
 
-<title>crisbour Blog – Cristian Bourceanu</title>
+<title>Rust FFI to Julia – Cristian Bourceanu</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -24,27 +25,25 @@ ul.task-list li input[type="checkbox"] {
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-66ab7fd5e73b7f0a764e0d49b3e29ab1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-7a0e04ec82617701cd34937292aa414e.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-09aa764689f4468b5e6f411a57a96eed.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-de3f2538d9b016b68e7fff28e6a0fd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-66ab7fd5e73b7f0a764e0d49b3e29ab1.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-7a0e04ec82617701cd34937292aa414e.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-09aa764689f4468b5e6f411a57a96eed.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-de3f2538d9b016b68e7fff28e6a0fd7c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -72,67 +71,9 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
 
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
-
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../styles.css">
 </head>
 
 <body class="nav-fixed">
@@ -142,7 +83,7 @@ window.Quarto = {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Cristian Bourceanu</span>
     </a>
   </div>
@@ -153,7 +94,7 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
   <li class="nav-item compact">
@@ -177,144 +118,95 @@ window.Quarto = {
 <!-- content -->
 <header id="title-block-header" class="quarto-title-block default page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">crisbour Blog</h1>
-                  <div>
-        <div class="description">
-          Recent posts on crisbour blog
-        </div>
-      </div>
-                </div>
+    <div class="quarto-title column-body">
+      <h1 class="title">Rust FFI to Julia</h1>
+                                <div class="quarto-categories">
+                <div class="quarto-category">rust</div>
+                <div class="quarto-category">ffi</div>
+                <div class="quarto-category">julia</div>
+              </div>
+                  </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
+      <div>
+      <div class="quarto-title-meta-heading">Author</div>
+      <div class="quarto-title-meta-contents">
+               <p>Cristian Bourceanu </p>
+            </div>
+    </div>
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">February 11, 2025</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(3)</span></div><div class="category" data-category="Y29udGFpbmVy">container <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ZmZp">ffi <span class="quarto-category-count">(1)</span></div><div class="category" data-category="anVsaWE=">julia <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bmV3cw==">news <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bml4">nix <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cnVzdA==">rust <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c2V0dXA=">setup <span class="quarto-category-count">(1)</span></div></div></div>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#rust---julia-interface" id="toc-rust---julia-interface" class="nav-link active" data-scroll-target="#rust---julia-interface">Rust &lt;-&gt; Julia interface</a>
+  <ul class="collapse">
+  <li><a href="#rust-abi" id="toc-rust-abi" class="nav-link" data-scroll-target="#rust-abi">Rust ABI</a>
+  <ul class="collapse">
+  <li><a href="#standard-strategy-extern-c" id="toc-standard-strategy-extern-c" class="nav-link" data-scroll-target="#standard-strategy-extern-c">Standard strategy: <code>extern "C"</code></a></li>
+  </ul></li>
+  <li><a href="#interim-solution-to-ease-integration" id="toc-interim-solution-to-ease-integration" class="nav-link" data-scroll-target="#interim-solution-to-ease-integration">Interim solution to ease integration</a></li>
+  </ul></li>
+  </ul>
+</nav>
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
-<!--
+<p>== WIP ==</p>
+<section id="rust---julia-interface" class="level1">
+<h1>Rust &lt;-&gt; Julia interface</h1>
+<p>While I have grown to appreciate the differences in applications for these 2 languages, these are not mutually exclusive and many times the stack or pipeline of components that compose one application might cross language boundaries.</p>
+<p>These might be because one language has much better support, usually in terms of libraries available, but also in robustness a complex library.</p>
+<p>While these 2 language are not truly compatible, some tricks can be added to ease translation, especially when it comes to the generics <code>Option</code> and <code>Result</code> in Rust. There are alternatives for these in Julia, even though by default Julia does not come equipped with the same paradigm:</p>
+<ul>
+<li><a href="https://github.com/0x0f0f0f/ResultTypes.jl">ResultTypes.jl</a></li>
+<li><code>Option</code> is generally used as <code>Union{T, Nothing}</code> in Julia</li>
+</ul>
+<section id="rust-abi" class="level2">
+<h2 class="anchored" data-anchor-id="rust-abi">Rust ABI</h2>
+<p>There is currently no agreed way even for calling dylib Rust &lt;-&gt; Rust, known as an ABI, this is because the arguments are not assured to have any layout in memory, they are decided arbitrarily when compiled:</p>
+<p><a href="https://lib.rs/crates/abi_stable">rust abi_stable crate</a> 🤣: &gt; the compiler is free to do whatever it pleases with these aspects of your &gt; software: the process by which it does that is explicitly unstable, and &gt; depends on your compiler version, the optimization level you selected, some &gt; llama’s mood in a wool farm near Berkshire… who knows?</p>
+<section id="standard-strategy-extern-c" class="level3">
+<h3 class="anchored" data-anchor-id="standard-strategy-extern-c">Standard strategy: <code>extern "C"</code></h3>
+<p>The standard way to call Rust through a FFI is translating it into to expose a C interface and reuse the system C-ABI. This however causes to drop many of the guarantees Rust tries to make and induces a huge effort boundary of developing software that empowers these two languages to talk, since the translation effort is required two folds as boilerplate glueing code that doesn’t add any value.</p>
+</section>
+</section>
+<section id="interim-solution-to-ease-integration" class="level2">
+<h2 class="anchored" data-anchor-id="interim-solution-to-ease-integration">Interim solution to ease integration</h2>
+<p>=&gt; Develop <code>RustCall.jl</code> library similar to <code>PyCall.jl</code> which can use cargo packager to build Rust pacakge and generate the necessary C-FFI shims for the two sides as follows:</p>
+<ol type="1">
+<li>Construct a SAT of the public interface of the Rust library</li>
+<li></li>
+</ol>
 
-    Change the title of your listing page.
-    Choose another listing type.
-    Change the sort option to date asc.
-    What happens when you change filter-ui to true?
 
--->
+</section>
+</section>
 
-
-
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="cnVzdCUyQ2ZmaSUyQ2p1bGlh" data-listing-date-sort="1739311020000" data-listing-file-modified-sort="1739314591143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="307">
-<div class="thumbnail"><a href="./posts/rust-abi.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/rust-abi.html" class="no-external">Rust FFI to Julia</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('cnVzdA=='); return false;">rust</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZmZp'); return false;">ffi</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('anVsaWE='); return false;">julia</div>
-
-</div>
-<div class="delink listing-description"><a href="./posts/rust-abi.html" class="no-external">
-== WIP ==
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/rust-abi.html" class="no-external">
-<div class="listing-date">
-February 11, 2025
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="bml4JTJDY29udGFpbmVyJTJDc2V0dXA=" data-listing-date-sort="1730551140000" data-listing-file-modified-sort="1739314591143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="7" data-listing-word-count-sort="1296">
-<div class="thumbnail"><a href="./posts/unreal-engine-nix.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/unreal-engine-nix.html" class="no-external">Unreal Engine on Nix (Linux)</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('bml4'); return false;">nix</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('Y29udGFpbmVy'); return false;">container</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c2V0dXA='); return false;">setup</div>
-
-</div>
-<div class="delink listing-description"><a href="./posts/unreal-engine-nix.html" class="no-external">
-The Unreal Engine will be useful for us to generate synthetic data for our research. They provide a prebuild binary for Ubuntu and Centos, however, since I am running NixOS…
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/unreal-engine-nix.html" class="no-external">
-<div class="listing-date">
-November 02, 2024
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="bmV3cw==" data-listing-date-sort="1730545200000" data-listing-file-modified-sort="1739314591143" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="1" data-listing-word-count-sort="32">
-<div class="thumbnail"><a href="./posts/welcome/index.html" class="no-external">
-
-<p class="card-img-top"><img src="posts/welcome/thumbnail.jpg"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/welcome/index.html" class="no-external">Welcome To My Blog</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('bmV3cw=='); return false;">news</div>
-
-</div>
-<div class="delink listing-description"><a href="./posts/welcome/index.html" class="no-external">
-This is the first post in a Quarto blog. Welcome!
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/welcome/index.html" class="no-external">
-<div class="listing-date">
-November 02, 2024
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div></main> <!-- /main -->
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {

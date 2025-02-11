@@ -7,20 +7,6 @@
     "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
   },
   {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "crisbour Blog",
-    "section": "",
-    "text": "Unreal Engine on Nix (Linux)\n\n\n\n\n\n\nnix\n\n\ncontainer\n\n\nsetup\n\n\n\n\n\n\n\n\n\nNovember 02, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nNovember 02, 2024\n\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "Welcome to my blog! I am a PhD student in University of Edinburgh, researching Multispectral LiDAR development and applications, but my previous experience is in RISC-V and hardware design.\nI have started this blog as a way to dump troubleshooting threads and document things I find interesting."
-  },
-  {
     "objectID": "posts/unreal-engine-nix.html",
     "href": "posts/unreal-engine-nix.html",
     "title": "Unreal Engine on Nix (Linux)",
@@ -61,5 +47,40 @@
     "title": "Unreal Engine on Nix (Linux)",
     "section": "More Info",
     "text": "More Info\nMore information about using Unreal in containers can be found at UnrealContainers, showcasing how to setup docker with correct flags to enable different functionalities.\nFor information on Linux setup: https://dev.epicgames.com/documentation/en-us/unreal-engine/linux-development-quickstart-for-unreal-engine"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "Welcome to my blog! I am a PhD student in University of Edinburgh, researching Multispectral LiDAR development and applications, but my previous experience is in RISC-V and hardware design.\nI have started this blog as a way to dump troubleshooting threads and document things I find interesting."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "crisbour Blog",
+    "section": "",
+    "text": "Rust FFI to Julia\n\n\n\nrust\n\nffi\n\njulia\n\n\n\n\n\n\n\n\n\nFebruary 11, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nUnreal Engine on Nix (Linux)\n\n\n\nnix\n\ncontainer\n\nsetup\n\n\n\n\n\n\n\n\n\nNovember 02, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nNovember 02, 2024\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/rust-abi.html",
+    "href": "posts/rust-abi.html",
+    "title": "Rust FFI to Julia",
+    "section": "",
+    "text": "== WIP =="
+  },
+  {
+    "objectID": "posts/rust-abi.html#rust-abi",
+    "href": "posts/rust-abi.html#rust-abi",
+    "title": "Rust FFI to Julia",
+    "section": "Rust ABI",
+    "text": "Rust ABI\nThere is currently no agreed way even for calling dylib Rust &lt;-&gt; Rust, known as an ABI, this is because the arguments are not assured to have any layout in memory, they are decided arbitrarily when compiled:\nrust abi_stable crate 🤣: &gt; the compiler is free to do whatever it pleases with these aspects of your &gt; software: the process by which it does that is explicitly unstable, and &gt; depends on your compiler version, the optimization level you selected, some &gt; llama’s mood in a wool farm near Berkshire… who knows?\n\nStandard strategy: extern \"C\"\nThe standard way to call Rust through a FFI is translating it into to expose a C interface and reuse the system C-ABI. This however causes to drop many of the guarantees Rust tries to make and induces a huge effort boundary of developing software that empowers these two languages to talk, since the translation effort is required two folds as boilerplate glueing code that doesn’t add any value."
+  },
+  {
+    "objectID": "posts/rust-abi.html#interim-solution-to-ease-integration",
+    "href": "posts/rust-abi.html#interim-solution-to-ease-integration",
+    "title": "Rust FFI to Julia",
+    "section": "Interim solution to ease integration",
+    "text": "Interim solution to ease integration\n=&gt; Develop RustCall.jl library similar to PyCall.jl which can use cargo packager to build Rust pacakge and generate the necessary C-FFI shims for the two sides as follows:\n\nConstruct a SAT of the public interface of the Rust library"
   }
 ]

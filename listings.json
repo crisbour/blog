@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/rust-abi.html",
       "/posts/unreal-engine-nix.html",
       "/posts/welcome/index.html"
     ]
