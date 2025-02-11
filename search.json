@@ -70,6 +70,13 @@
     "text": "== WIP =="
   },
   {
+    "objectID": "posts/rust-abi.html#existing-solution",
+    "href": "posts/rust-abi.html#existing-solution",
+    "title": "Rust FFI to Julia",
+    "section": "Existing solution",
+    "text": "Existing solution\nYou can call Julia from Rust, using the exposed C FFI for Julia as leveraged by the jlrs crate, but we are also interested about the reverse."
+  },
+  {
     "objectID": "posts/rust-abi.html#rust-abi",
     "href": "posts/rust-abi.html#rust-abi",
     "title": "Rust FFI to Julia",
@@ -81,6 +88,6 @@
     "href": "posts/rust-abi.html#interim-solution-to-ease-integration",
     "title": "Rust FFI to Julia",
     "section": "Interim solution to ease integration",
-    "text": "Interim solution to ease integration\n=&gt; Develop RustCall.jl library similar to PyCall.jl which can use cargo packager to build Rust pacakge and generate the necessary C-FFI shims for the two sides as follows:\n\nConstruct a SAT of the public interface of the Rust library"
+    "text": "Interim solution to ease integration\n=&gt; Develop RustCall.jl library similar to PyCall.jl which can use cargo packager to build Rust pacakge and generate the necessary C-FFI shims for the two sides as follows:\n\nConstruct a SAT of the public interface of the Rust library\nLimit the scope of supported types to be translated as follows:\n\nRust::Result&lt;T, dyn Box&lt;Error&gt;&gt; &lt;-&gt; Julia::ResultType{T}: indirect C-FFI WIP workout common representation\nRust::Option&lt;T&gt; &lt;-&gt; Julia::Union{T, Nothing}: simply use C++ union\nPrimitives\n\ninteger and floats can be directly converted\nchar*, CString, CStr, Rust::String, Rust::&str, Julia::String, Julia::SubString =&gt; These need special attentions\n\nenums: ==WARN Julia does not have a first class enum type==, but it depends on the global constant declaration similar to C. On the other side, Rust::enum is more similar to a Julia::Union. Also special care needs to be taken as a common design pattern in Julia is to do multiple dispatch on type hierarchies, whereas Rust dispatches over traits.\nstructs: Every Rust struct must be converted to a C repr struct in order to be exposed through the FFI. The same problem seems to occur with Julia\n\nWhile in Julia or structs are considered to be passed by reference, Rust defines, clone, immutable ref or mutable ref.\n\nWIP: Write some simple tests to understand how structs behave in Julia, but from my observations so far, it’s either immutable or mutable ref based on struct definition rather than function definition."
   }
 ]

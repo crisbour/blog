@@ -159,6 +159,7 @@ ul.task-list li input[type="checkbox"] {
   <ul>
   <li><a href="#rust---julia-interface" id="toc-rust---julia-interface" class="nav-link active" data-scroll-target="#rust---julia-interface">Rust &lt;-&gt; Julia interface</a>
   <ul class="collapse">
+  <li><a href="#existing-solution" id="toc-existing-solution" class="nav-link" data-scroll-target="#existing-solution">Existing solution</a></li>
   <li><a href="#rust-abi" id="toc-rust-abi" class="nav-link" data-scroll-target="#rust-abi">Rust ABI</a>
   <ul class="collapse">
   <li><a href="#standard-strategy-extern-c" id="toc-standard-strategy-extern-c" class="nav-link" data-scroll-target="#standard-strategy-extern-c">Standard strategy: <code>extern "C"</code></a></li>
@@ -185,6 +186,10 @@ ul.task-list li input[type="checkbox"] {
 <li><a href="https://github.com/0x0f0f0f/ResultTypes.jl">ResultTypes.jl</a></li>
 <li><code>Option</code> is generally used as <code>Union{T, Nothing}</code> in Julia</li>
 </ul>
+<section id="existing-solution" class="level2">
+<h2 class="anchored" data-anchor-id="existing-solution">Existing solution</h2>
+<p>You can call Julia from Rust, using the exposed C FFI for Julia as leveraged by the <a href="https://github.com/Taaitaaiger/jlrs">jlrs</a> crate, but we are also interested about the reverse.</p>
+</section>
 <section id="rust-abi" class="level2">
 <h2 class="anchored" data-anchor-id="rust-abi">Rust ABI</h2>
 <p>There is currently no agreed way even for calling dylib Rust &lt;-&gt; Rust, known as an ABI, this is because the arguments are not assured to have any layout in memory, they are decided arbitrarily when compiled:</p>
@@ -199,7 +204,22 @@ ul.task-list li input[type="checkbox"] {
 <p>=&gt; Develop <code>RustCall.jl</code> library similar to <code>PyCall.jl</code> which can use cargo packager to build Rust pacakge and generate the necessary C-FFI shims for the two sides as follows:</p>
 <ol type="1">
 <li>Construct a SAT of the public interface of the Rust library</li>
-<li></li>
+<li>Limit the scope of supported types to be translated as follows:
+<ul>
+<li>Rust::<code>Result&lt;T, dyn Box&lt;Error&gt;&gt;</code> &lt;-&gt; Julia::<code>ResultType{T}</code>: indirect C-FFI WIP workout common representation</li>
+<li>Rust::<code>Option&lt;T&gt;</code> &lt;-&gt; Julia::<code>Union{T, Nothing}</code>: simply use C++ union</li>
+<li>Primitives
+<ul>
+<li>integer and floats can be directly converted</li>
+<li><code>char*</code>, <code>CString</code>, <code>CStr</code>, Rust::<code>String</code>, Rust::<code>&amp;str</code>, Julia::<code>String</code>, Julia::<code>SubString</code> =&gt; These need special attentions</li>
+</ul></li>
+<li>enums: ==WARN Julia does not have a first class enum type==, but it depends on the global constant declaration similar to C. On the other side, Rust::<code>enum</code> is more similar to a Julia::<code>Union</code>. Also special care needs to be taken as a common design pattern in Julia is to do multiple dispatch on type hierarchies, whereas Rust dispatches over traits.</li>
+<li>structs: Every Rust struct must be converted to a C repr struct in order to be exposed through the FFI. The same problem seems to occur with Julia</li>
+</ul></li>
+<li>While in Julia or structs are considered to be passed by reference, Rust defines, clone, immutable ref or mutable ref.
+<ul>
+<li>WIP: Write some simple tests to understand how structs behave in Julia, but from my observations so far, it’s either immutable or mutable ref based on <code>struct</code> definition rather than function definition.</li>
+</ul></li>
 </ol>
 
 
