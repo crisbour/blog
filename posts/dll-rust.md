@@ -44,7 +44,7 @@ cargo add --build embed-resource
 ```
 
 2. Write the [windows resource file](https://learn.microsoft.com/en-us/windows/win32/menurc/about-resource-files) as follows in an `.rc` file.
-```
+```c
 // Define the DLL as an RCDATA resource
 IDR_MYDLL RCDATA "vendor_library.dll"
 ```
