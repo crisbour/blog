@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/dll-rust.html",
       "/posts/rust-abi.html",
       "/posts/unreal-engine-nix.html",
       "/posts/welcome/index.html"

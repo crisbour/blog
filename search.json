@@ -1,12 +1,5 @@
 [
   {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
-    "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
-  },
-  {
     "objectID": "posts/unreal-engine-nix.html",
     "href": "posts/unreal-engine-nix.html",
     "title": "Unreal Engine on Nix (Linux)",
@@ -49,6 +42,27 @@
     "text": "More Info\nMore information about using Unreal in containers can be found at UnrealContainers, showcasing how to setup docker with correct flags to enable different functionalities.\nFor information on Linux setup: https://dev.epicgames.com/documentation/en-us/unreal-engine/linux-development-quickstart-for-unreal-engine"
   },
   {
+    "objectID": "posts/dll-rust.html",
+    "href": "posts/dll-rust.html",
+    "title": "Rust sys crate for .DLL",
+    "section": "",
+    "text": "Building a rust *-sys crate is already quite a standard process to reuse stable library that expose a C-ABI and it’s nicely explained in kornel rust-sys-crate blog. While this works great on Unix or with statically linked library, if you had access to the source, a .DLL requires [1] to load it at runtime.\n[1] Or does it? I only managed to work with a dll using libloading crate, while bindgen itself didn’t manage to link it, no matter what flags I passed to the rust compiler.\n\n\nRust statically links the binaries compiled, however, not the dynamic library which needs to be loaded at runtime. In the case of dynamic library which can be linked at runtime because they are in the linker path, nothing else it’s required. However, if we want the executable to be self maintained, the dynamic library path must be given.\nMy first attempt was to use the OUT_DIR, however this expands in an absolute path which is written in the binary as a constant. Hence, changing the path of the executable or transferring it on another machine, breaks it.\n\n\n\nThe alternative I thought is to embed the .dll inside the executable using embed-resource, extract it at runtime and load it with libloading. This idea doesn’t seem to have been explored before, so I have no certainty yet that is works.\n\n\n\nAdd dependency to build step\n\ncargo add --build embed-resource\n\nWrite the windows resource file as follows in an .rc file.\n\n// Define the DLL as an RCDATA resource\nIDR_MYDLL RCDATA \"vendor_library.dll\"\n\nEmbed the dll inside the executable:\n\nfn main() {\n    embed_resource::compile(\"dll_resource.rc\", embed_resource::NONE)\n        .manifest_optional()\n        .unwrap();\n}\n\nExtract dll at runtime and load it with libloading:\n\nuse winapi::um::libloaderapi::{FindResourceW, LoadResource, SizeofResource, LockResource};\nuse winapi::um::winbase::FreeResource;\nuse winapi::um::winuser::RT_RCDATA;\nuse std::ptr;\nuse std::ffi::OsStr;\nuse std::os::windows::ffi::OsStrExt;\nuse libloading::{Library, Symbol};\n\nunsafe fn extract_and_load_dll() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {\n    // Convert resource name to wide string\n    let resource_name = OsStr::new(\"IDR_MYDLL\").encode_wide().chain(Some(0)).collect::&lt;Vec&lt;_&gt;&gt;();\n    \n    // Locate the resource\n    let h_resource = FindResourceW(\n        ptr::null_mut(),\n        resource_name.as_ptr(),\n        RT_RCDATA\n    );\n    \n    // Load and lock the resource\n    let h_global = LoadResource(ptr::null_mut(), h_resource);\n    let dll_data = LockResource(h_global) as *const u8;\n    let dll_size = SizeofResource(ptr::null_mut(), h_resource) as usize;\n    \n    // Write to temp file\n    let temp_path = std::env::temp_dir().join(\"vendor_library.dll\");\n    std::fs::write(&temp_path, std::slice::from_raw_parts(dll_data, dll_size))?;\n    \n    // Load the DLL\n    let lib = Library::new(&temp_path)?;\n    let func: Symbol&lt;unsafe extern \"C\" fn() -&gt; i32&gt; = lib.get(b\"example_function\")?;\n    println!(\"Result: {}\", func());\n    \n    // Cleanup (optional)\n    FreeResource(h_global);\n    std::fs::remove_file(temp_path)?;\n    \n    Ok(())\n}\nA more detailed example of how to work with embedded resources in Windows is shown in embed and extract binaries into/from exe as resources. In our case the resource type is RCDATA to describe a custom binary."
+  },
+  {
+    "objectID": "posts/dll-rust.html#statically-linked",
+    "href": "posts/dll-rust.html#statically-linked",
+    "title": "Rust sys crate for .DLL",
+    "section": "",
+    "text": "Rust statically links the binaries compiled, however, not the dynamic library which needs to be loaded at runtime. In the case of dynamic library which can be linked at runtime because they are in the linker path, nothing else it’s required. However, if we want the executable to be self maintained, the dynamic library path must be given.\nMy first attempt was to use the OUT_DIR, however this expands in an absolute path which is written in the binary as a constant. Hence, changing the path of the executable or transferring it on another machine, breaks it."
+  },
+  {
+    "objectID": "posts/dll-rust.html#embed-resource",
+    "href": "posts/dll-rust.html#embed-resource",
+    "title": "Rust sys crate for .DLL",
+    "section": "",
+    "text": "The alternative I thought is to embed the .dll inside the executable using embed-resource, extract it at runtime and load it with libloading. This idea doesn’t seem to have been explored before, so I have no certainty yet that is works.\n\n\n\nAdd dependency to build step\n\ncargo add --build embed-resource\n\nWrite the windows resource file as follows in an .rc file.\n\n// Define the DLL as an RCDATA resource\nIDR_MYDLL RCDATA \"vendor_library.dll\"\n\nEmbed the dll inside the executable:\n\nfn main() {\n    embed_resource::compile(\"dll_resource.rc\", embed_resource::NONE)\n        .manifest_optional()\n        .unwrap();\n}\n\nExtract dll at runtime and load it with libloading:\n\nuse winapi::um::libloaderapi::{FindResourceW, LoadResource, SizeofResource, LockResource};\nuse winapi::um::winbase::FreeResource;\nuse winapi::um::winuser::RT_RCDATA;\nuse std::ptr;\nuse std::ffi::OsStr;\nuse std::os::windows::ffi::OsStrExt;\nuse libloading::{Library, Symbol};\n\nunsafe fn extract_and_load_dll() -&gt; Result&lt;(), Box&lt;dyn std::error::Error&gt;&gt; {\n    // Convert resource name to wide string\n    let resource_name = OsStr::new(\"IDR_MYDLL\").encode_wide().chain(Some(0)).collect::&lt;Vec&lt;_&gt;&gt;();\n    \n    // Locate the resource\n    let h_resource = FindResourceW(\n        ptr::null_mut(),\n        resource_name.as_ptr(),\n        RT_RCDATA\n    );\n    \n    // Load and lock the resource\n    let h_global = LoadResource(ptr::null_mut(), h_resource);\n    let dll_data = LockResource(h_global) as *const u8;\n    let dll_size = SizeofResource(ptr::null_mut(), h_resource) as usize;\n    \n    // Write to temp file\n    let temp_path = std::env::temp_dir().join(\"vendor_library.dll\");\n    std::fs::write(&temp_path, std::slice::from_raw_parts(dll_data, dll_size))?;\n    \n    // Load the DLL\n    let lib = Library::new(&temp_path)?;\n    let func: Symbol&lt;unsafe extern \"C\" fn() -&gt; i32&gt; = lib.get(b\"example_function\")?;\n    println!(\"Result: {}\", func());\n    \n    // Cleanup (optional)\n    FreeResource(h_global);\n    std::fs::remove_file(temp_path)?;\n    \n    Ok(())\n}\nA more detailed example of how to work with embedded resources in Windows is shown in embed and extract binaries into/from exe as resources. In our case the resource type is RCDATA to describe a custom binary."
+  },
+  {
     "objectID": "about.html",
     "href": "about.html",
     "title": "About",
@@ -60,7 +74,7 @@
     "href": "index.html",
     "title": "crisbour Blog",
     "section": "",
-    "text": "Rust FFI to Julia\n\n\n\nrust\n\nffi\n\njulia\n\n\n\n\n\n\n\n\n\nFebruary 11, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nUnreal Engine on Nix (Linux)\n\n\n\nnix\n\ncontainer\n\nsetup\n\n\n\n\n\n\n\n\n\nNovember 02, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nNovember 02, 2024\n\n\n\n\n\nNo matching items"
+    "text": "Rust sys crate for .DLL\n\n\n\nrust\n\nwindows\n\nffi\n\n\n\n\n\n\n\n\n\nApril 08, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nRust FFI to Julia\n\n\n\nrust\n\nffi\n\njulia\n\n\n\n\n\n\n\n\n\nFebruary 11, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nUnreal Engine on Nix (Linux)\n\n\n\nnix\n\ncontainer\n\nsetup\n\n\n\n\n\n\n\n\n\nNovember 02, 2024\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nNovember 02, 2024\n\n\n\n\n\nNo matching items"
   },
   {
     "objectID": "posts/rust-abi.html",
@@ -89,5 +103,12 @@
     "title": "Rust FFI to Julia",
     "section": "Interim solution to ease integration",
     "text": "Interim solution to ease integration\n=&gt; Develop RustCall.jl library similar to PyCall.jl which can use cargo packager to build Rust pacakge and generate the necessary C-FFI shims for the two sides as follows:\n\nConstruct a SAT of the public interface of the Rust library\nLimit the scope of supported types to be translated as follows:\n\nRust::Result&lt;T, dyn Box&lt;Error&gt;&gt; &lt;-&gt; Julia::ResultType{T}: indirect C-FFI WIP workout common representation\nRust::Option&lt;T&gt; &lt;-&gt; Julia::Union{T, Nothing}: simply use C++ union\nPrimitives\n\ninteger and floats can be directly converted\nchar*, CString, CStr, Rust::String, Rust::&str, Julia::String, Julia::SubString =&gt; These need special attentions\n\nenums: ==WARN Julia does not have a first class enum type==, but it depends on the global constant declaration similar to C. On the other side, Rust::enum is more similar to a Julia::Union. Also special care needs to be taken as a common design pattern in Julia is to do multiple dispatch on type hierarchies, whereas Rust dispatches over traits.\nstructs: Every Rust struct must be converted to a C repr struct in order to be exposed through the FFI. The same problem seems to occur with Julia\n\nWhile in Julia or structs are considered to be passed by reference, Rust defines, clone, immutable ref or mutable ref.\n\nWIP: Write some simple tests to understand how structs behave in Julia, but from my observations so far, it’s either immutable or mutable ref based on struct definition rather than function definition."
+  },
+  {
+    "objectID": "posts/welcome/index.html",
+    "href": "posts/welcome/index.html",
+    "title": "Welcome To My Blog",
+    "section": "",
+    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
   }
 ]
