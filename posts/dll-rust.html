@@ -361,8 +361,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <ol start="2" type="1">
 <li>Write the <a href="https://learn.microsoft.com/en-us/windows/win32/menurc/about-resource-files">windows resource file</a> as follows in an <code>.rc</code> file.</li>
 </ol>
-<pre><code>// Define the DLL as an RCDATA resource
-IDR_MYDLL RCDATA "vendor_library.dll"</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c code-with-copy"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Define the DLL as an RCDATA resource</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>IDR_MYDLL RCDATA <span class="st">"vendor_library.dll"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <ol start="3" type="1">
 <li>Embed the <code>dll</code> inside the executable:</li>
 </ol>
